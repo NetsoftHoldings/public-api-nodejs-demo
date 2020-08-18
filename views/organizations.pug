@@ -1,0 +1,11 @@
+extends layout
+
+block content
+    - for(let i = 0; i < organizations.length; ++i)
+        - let org = organizations[i]
+        h1= org.name
+        dl
+            dt ID
+            dd= org.id
+            dt Status
+            dd= org.status

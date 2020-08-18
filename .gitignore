@@ -1,0 +1,4 @@
+/node_modules/
+/public/stylesheets/*.css
+/public/stylesheets/*.css.map
+configState.json
