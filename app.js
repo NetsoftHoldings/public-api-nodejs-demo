@@ -7,6 +7,7 @@ const sassMiddleware = require('node-sass-middleware');
 
 const indexRouter = require('./routes/index.js');
 const organizationsRouter = require('./routes/organizations.js');
+const webTokenRouter = require('./routes/web_tokens.js');
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/organizations', organizationsRouter);
+app.use('/web_tokens', webTokenRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

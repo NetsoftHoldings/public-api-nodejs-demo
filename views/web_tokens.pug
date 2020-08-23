@@ -1,0 +1,50 @@
+extends layout
+
+block content
+    form(action="/web_tokens/test" method="POST" target="_blank")
+        select(name="page" id="page_selector")
+            option(value="") - Select a page -
+            each page in data.pages
+                option(value=page.page)= page.page
+        input(type="number" name="organization_id" placeholder="Organization #")
+        input(type="number" name="user_id" placeholder="User #")
+        button(type="submit") Redirect to page as above user
+    each page in data.pages
+        div(id="page_" + page.page class="doc_node hidden")
+            h3= page.page
+            dl
+                dt page ID
+                dd= page.page
+                dt page URL template
+                dd= page.page_url
+            h4 Params
+            each param in page.params
+                strong= param.name
+                dl
+                    dt param
+                    dd= param.param
+                    dt required
+                    dd= param.required
+                    if (param.type)
+                        dt type
+                        dd= param.type
+                    if (param.values)
+                        dt values
+                        dd= JSON.stringify(param.values)
+    script(type="text/javascript").
+        function pageChange(elem) {
+            let elems = document.getElementsByClassName('doc_node');
+            let cur_page = elem.value;
+            Array.from(elems).forEach((e) => {
+                if (e.id === 'page_'+cur_page) {
+                    e.classList.remove('hidden');
+                } else {
+                    e.classList.add('hidden');
+                }
+            });
+        }
+        let elem = document.getElementById('page_selector');
+        elem.addEventListener("change", function (e) {
+            pageChange(e.target);
+        });
+        pageChange(elem);

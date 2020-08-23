@@ -6,7 +6,6 @@ const router = express.Router();
 router.get('/', async function (req, res, next) {
     const response = await api.request('v2/organizations',{
         method: 'GET',
-        json: true,
     });
     const body = JSON.parse(response.body);
     res.render('organizations', {

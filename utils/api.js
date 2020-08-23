@@ -79,8 +79,14 @@ async function request(url, options) {
     await checkToken();
 
     let fullUrl = state.api_base_url + url;
-
-    return client.requestResource(fullUrl, state.token, options);
+    let opts = {...options};
+    if (opts.json) {
+        opts.body = JSON.stringify(options.json);
+        delete opts.json;
+        opts.headers = {...(opts.headers || {})};
+        opts.headers['Content-Type'] = 'application/json';
+    }
+    return client.requestResource(fullUrl, state.token, opts);
 }
 
 module.exports = {
