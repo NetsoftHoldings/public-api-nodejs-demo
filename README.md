@@ -15,6 +15,22 @@ and the API endpoint url (https://api.hubstaff.com/)
 The example code in api.js fetches and caches this discovery data for 1 week. This way it does
 not need to be constantly fetched.
 
+## Token persistence
+
+This demo has a simple way of managing the API token. It simply stores it in json file that is read from
+on startup and written when tokens are refreshed.
+
+A proper storage should have locking around read and write. And also the code should lock and re-read the
+ state file when refreshing in case another process already refreshed the token.
+e.g. a proper refresh token flow should be
+
+1) lock
+2) re-read state and load the token
+3) if the token is no longer expired or near expiring use the new token (another process refreshed)
+4) otherwise refresh the token
+5) save
+6) release lock 
+
 ## Client app vs Personal access token
 
 The Hubstaff account system's personal access token is designed to work very
@@ -43,4 +59,12 @@ token as needed and persist it to the configState.json between executions.
 
 ## Client app use
 
-This is not yet implemented in the demo.
+Setup the configState.json as defined above
+Then run the cli_tool sample like this
+```bash
+node bin/cli_tool.js help
+
+node bin/cli_tool.js myself
+
+node bin/cli_tool.js organizations
+```
