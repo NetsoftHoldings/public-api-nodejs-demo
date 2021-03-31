@@ -18,6 +18,10 @@ const argv = yargs
         const body = JSON.parse(response.body);
         console.log(body);
     })
+    .command('dump_token', 'Dump the token details', () => {}, async (argv) => {
+        await api.initialize();
+        console.log(api.tokenDetails());
+    })
     .demandCommand()
     .help()
     .alias('help', 'h')
