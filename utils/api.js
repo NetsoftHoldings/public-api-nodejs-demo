@@ -1,6 +1,7 @@
 const {Issuer, TokenSet} = require('openid-client');
 const debug = require('debug')('public-api-demo:api');
 const fs = require('fs');
+const jose = require('jose');
 
 // constants
 const ISSUER_EXPIRE_DURATION = 7 * 24 * 60 * 60; // 1 week
@@ -72,7 +73,6 @@ async function initialize() {
     });
     saveState();
     debug('API initialized');
-    await checkToken();
 }
 
 async function request(url, options) {
@@ -83,9 +83,23 @@ async function request(url, options) {
     return client.requestResource(fullUrl, state.token, options);
 }
 
+function tokenDetails() {
+    let ret = {};
+
+    if (state.token.access_token) {
+        ret.access_token = jose.JWT.decode(state.token.access_token);
+    }
+    if (state.token.refresh_token) {
+        ret.refresh_token = jose.JWT.decode(state.token.refresh_token);
+    }
+
+    return ret;
+}
+
 module.exports = {
     initialize,
     checkToken,
     request,
+    tokenDetails,
 };
 
