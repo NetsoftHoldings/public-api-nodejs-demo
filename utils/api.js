@@ -1,6 +1,6 @@
 const {Issuer, TokenSet} = require('openid-client');
 const debug = require('debug')('public-api-demo:api');
-const fs = require('fs');
+const fs = require('fs').promises;
 const jose = require('jose');
 
 // constants
@@ -19,12 +19,12 @@ let state = {
 };
 let client;
 
-function loadState() {
-    return fs.readFileSync('./configState.json', 'utf8');
+async function loadState() {
+    return await fs.readFile('./configState.json', 'utf8');
 }
 
-function saveState() {
-    fs.writeFileSync('./configState.json', JSON.stringify(state, null, 2), 'utf8');
+async function saveState() {
+    await fs.writeFile('./configState.json', JSON.stringify(state, null, 2), 'utf8');
     debug('State saved');
 }
 
@@ -43,7 +43,7 @@ async function checkToken() {
 
 async function initialize() {
     debug('Initializing API');
-    let data = loadState();
+    let data = await loadState();
     data = JSON.parse(data);
     if (data.issuer) {
         state.issuer = new Issuer(data.issuer);
@@ -67,11 +67,11 @@ async function initialize() {
     }
     client = new state.issuer.Client({
         // For personal access token we can use PAT/PAT.
-        // This is only needed because the library requires a client_id where as the API endpoint does not require it
+        // This is only needed because the library requires a client_id whereas the API endpoint does not require it
         client_id: 'PAT',
         client_secret: 'PAT',
     });
-    saveState();
+    await saveState();
     debug('API initialized');
 }
 
@@ -87,10 +87,10 @@ function tokenDetails() {
     let ret = {};
 
     if (state.token.access_token) {
-        ret.access_token = jose.JWT.decode(state.token.access_token);
+        ret.access_token = jose.decodeJwt(state.token.access_token);
     }
     if (state.token.refresh_token) {
-        ret.refresh_token = jose.JWT.decode(state.token.refresh_token);
+        ret.refresh_token = jose.decodeJwt(state.token.refresh_token);
     }
 
     return ret;
